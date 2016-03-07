@@ -1,7 +1,7 @@
 {
     "name": "webtown/kunstmaan-setup-bundle",
     "require": {
-        "kunstmaan/bundles-cms": "^3.5"
+        "kunstmaan/bundles-cms": "^3.5@dev"
     },
     "authors": [
         {
