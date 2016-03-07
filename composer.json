@@ -12,5 +12,6 @@
     "bin": [
         "bin/setup-km-project",
         "bin/update-km-project"
-    ]
+    ],
+    "minimum-stability": "dev"
 }
