@@ -1,0 +1,16 @@
+{
+    "name": "webtown/kunstmaan-setup-bundle",
+    "require": {
+        "kunstmaan/bundles-cms": "^3.5"
+    },
+    "authors": [
+        {
+            "name": "Krisztián Ferenczi",
+            "email": "ferenczi.krisztian@gmail.com"
+        }
+    ],
+    "bin": [
+        "bin/setup-km-project",
+        "bin/update-km-project"
+    ]
+}
