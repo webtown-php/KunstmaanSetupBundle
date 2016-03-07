@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-source _km-functions.sh
+source `pwd`/`dirname $0`/_km-functions.sh
 
 # ======================================================================================================================
 echo_title "First of all we are checking the software environment"
