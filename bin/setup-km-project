@@ -13,6 +13,8 @@ source `pwd`/`dirname $0`/_km-functions.sh
 USE_MIGRATION=2
 # 0=NO, 1=YES, 2=ASK
 LOAD_FIXTURES=2
+
+BUNDLE_NAMESPACE=""
 while [[ $# > 0 ]]
     do
     key="$1"
@@ -32,6 +34,10 @@ while [[ $# > 0 ]]
         ;;
         --no-load-fixtures)
         LOAD_FIXTURES=0
+        ;;
+        --bundle-namespace)
+        BUNDLE_NAMESPACE="$2"
+        shift
         ;;
         # If you want using config parameter, eg: ./setup-km-project -s /etc ==> SEARCHPATH="/etc"
         #    -s|--searchpath)
@@ -83,7 +89,11 @@ done
 
 # ======================================================================================================================
 echo_title "Run 'app/console kuma:generate:bundle' command..."
-app/console kuma:generate:bundle
+if [[ ${BUNDLE_NAMESPACE} ~= ^[a-zA-Z_][0-9a-zA-Z_]*/[a-zA-Z_][0-9a-zA-Z_]*Bundle$ ]] ; then
+    app/console kuma:generate:bundle --namespace=${BUNDLE_NAMESPACE} --dir=src --no-interaction
+else
+    app/console kuma:generate:bundle
+fi
 
 echo_title "Run 'app/console kuma:generate:default-site' command..."
 app/console kuma:generate:default-site
