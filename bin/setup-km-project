@@ -9,6 +9,7 @@
 
 source `pwd`/`dirname $0`/_km-functions.sh
 
+ALLOW_DEFAULTS=0
 # 0=NO, 1=YES, 2=ASK
 USE_MIGRATION=2
 # 0=NO, 1=YES, 2=ASK
@@ -20,6 +21,9 @@ while [[ $# > 0 ]]
     key="$1"
 
     case $key in
+        --allow-defaults)
+        ALLOW_DEFAULTS=1
+        ;;
         # Using migration
         --use-migration)
         USE_MIGRATION=1
@@ -96,7 +100,11 @@ else
 fi
 
 echo_title "Run 'app/console kuma:generate:default-site' command..."
-app/console kuma:generate:default-site
+if [[ ${ALLOW_DEFAULTS} == 1 ]] ; then
+    app/console kuma:generate:default-site --no-interaction
+else
+    app/console kuma:generate:default-site
+fi
 
 echo_title "Run 'app/console doctrine:database:create' command..."
 app/console doctrine:database:create --if-not-exists
@@ -136,7 +144,11 @@ fi
 
 ## Optionaly: create admin behat tests
 echo_title "Run 'app/console kuma:generate:admin-tests' command..."
-app/console kuma:generate:admin-tests
+if [[ ${ALLOW_DEFAULTS} == 1 ]] ; then
+    app/console kuma:generate:admin-tests --no-interaction
+else
+    app/console kuma:generate:admin-tests
+fi
 
 # ======================================================================================================================
 echo_title "Install other dependencies... (Bundler, NPM, Bower, Gulp)"
