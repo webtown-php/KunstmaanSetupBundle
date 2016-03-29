@@ -1,6 +1,49 @@
 #!/usr/bin/env bash
 
+# Possible parameters:
+#
+#   --use-migration     Using migration
+#   --no-use-migration  Using doctrine schema update instead of migration
+#   --load-fixtures     Load fixtures
+#   --no-load-fixtures  Disable fixtures loading
+
 source `pwd`/`dirname $0`/_km-functions.sh
+
+# 0=NO, 1=YES, 2=ASK
+USE_MIGRATION=2
+# 0=NO, 1=YES, 2=ASK
+LOAD_FIXTURES=2
+while [[ $# > 0 ]]
+    do
+    key="$1"
+
+    case $key in
+        # Using migration
+        --use-migration)
+        USE_MIGRATION=1
+        ;;
+        # Using schema update instead of migration
+        --no-use-migration)
+        USE_MIGRATION=0
+        ;;
+        # Load fixtures
+        --load-fixtures)
+        LOAD_FIXTURES=1
+        ;;
+        --no-load-fixtures)
+        LOAD_FIXTURES=0
+        ;;
+        # If you want using config parameter, eg: ./setup-km-project -s /etc ==> SEARCHPATH="/etc"
+        #    -s|--searchpath)
+        #    SEARCHPATH="$2"
+        #    shift # past argument
+        #    ;;
+        *)
+        # Nothing
+        ;;
+    esac
+    shift # past argument or value
+done
 
 # ======================================================================================================================
 echo_title "First of all we are checking the software environment"
@@ -49,10 +92,20 @@ echo_title "Run 'app/console doctrine:database:create' command..."
 app/console doctrine:database:create --if-not-exists
 
 echo_title "Build database..."
-echo "You can choice a workflow. You want to use database migration (create migration file and run it - preferred) OR just run 'doctrine:schema:create' command."
-read -p "Do you want to use database migration? (Y/n) " -n 1 -r
-echo
-if [[ $REPLY =~ ^[nN]$ ]]
+if [[ ${USE_MIGRATION} == 2 ]]
+then
+    echo "You can choice a workflow. You want to use database migration (create migration file and run it - preferred) OR just run 'doctrine:schema:create' command."
+    read -p "Do you want to use database migration? (Y/n) " -n 1 -r
+    echo
+    if [[ $REPLY =~ ^[nN]$ ]]
+    then
+        USE_MIGRATION=0
+    else
+        USE_MIGRATION=1
+    fi
+fi
+
+if [[ ${USE_MIGRATION} == 0 ]]
 then
     app/console doctrine:schema:create
 else
@@ -61,7 +114,15 @@ else
 fi
 
 echo_title "Load fixtures"
-app/console doctrine:fixtures:load
+if [[ ${LOAD_FIXTURES} == 2 ]]
+then
+    app/console doctrine:fixtures:load
+elif [[ ${LOAD_FIXTURES} == 1 ]]
+then
+    app/console doctrine:fixtures:load --no-interaction
+else
+    echo "Don't load fixtures"
+fi
 
 ## Optionaly: create admin behat tests
 echo_title "Run 'app/console kuma:generate:admin-tests' command..."
