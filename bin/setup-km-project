@@ -2,6 +2,8 @@
 
 # Possible parameters:
 #
+#   --allow-defaults    Allow default parameters
+#   --bundle-namespace  Namespace of Kunstmaan generated bundle
 #   --use-migration     Using migration
 #   --no-use-migration  Using doctrine schema update instead of migration
 #   --load-fixtures     Load fixtures
@@ -136,11 +138,9 @@ else
 fi
 
 echo_title "Load fixtures"
-if [[ ${LOAD_FIXTURES} == 2 ]]
-then
+if [[ ${LOAD_FIXTURES} == 2 ]]; then
     app/console doctrine:fixtures:load
-elif [[ ${LOAD_FIXTURES} == 1 ]]
-then
+elif [[ ${LOAD_FIXTURES} == 1 ]]; then
     app/console doctrine:fixtures:load --no-interaction
 else
     echo "Don't load fixtures"
@@ -148,7 +148,7 @@ fi
 
 ## Optionaly: create admin behat tests
 echo_title "Run 'app/console kuma:generate:admin-tests' command..."
-if [[ ${BUNDLE_NAMESPACE_IS_VALID} == 1 ]] ; then
+if [[ ${BUNDLE_NAMESPACE_IS_VALID} == 1 ]]; then
     app/console kuma:generate:admin-tests --namespace=${BUNDLE_NAMESPACE} --no-interaction
 else
     app/console kuma:generate:admin-tests
