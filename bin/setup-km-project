@@ -156,10 +156,10 @@ fi
 
 # ======================================================================================================================
 echo_title "Install other dependencies... (Bundler, NPM, Bower, Gulp)"
-bundle install
-npm install
-bower install
-gulp build
+bundle install </dev/null
+npm install </dev/null
+bower install </dev/null
+gulp build </dev/null
 
 # ======================================================================================================================
 echo_title "Install and dump assets"
