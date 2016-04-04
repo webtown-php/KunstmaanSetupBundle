@@ -85,12 +85,21 @@ else
     echo "Don't load fixtures"
 fi
 
+# after the web/uploads directory has been created
+if [ -d "web/uploads" ]; then
+    HTTPDUSER=`ps axo user,comm | grep -E '[a]pache|[h]ttpd|[_]www|[w]ww-data|[n]ginx' | grep -v root | head -1 | cut -d\  -f1`
+    chmod -R 0777 web/uploads
+    setfacl -R -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX web/uploads
+    setfacl -dR -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX web/uploads
+fi
+
 # ======================================================================================================================
+# The </dev/null fix the "read: read error: 0: Resource temporarily unavailable" error!
 echo_title "Install other dependencies... (Bundler, NPM, Bower, Gulp)"
-bundle install
-npm install
-bower install
-gulp build
+bundle install </dev/null
+npm install </dev/null
+bower install </dev/null
+gulp build </dev/null
 
 # ======================================================================================================================
 echo_title "Install and dump assets"

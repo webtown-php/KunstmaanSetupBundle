@@ -146,6 +146,14 @@ else
     echo "Don't load fixtures"
 fi
 
+# after the web/uploads directory has been created
+if [ -d "web/uploads" ]; then
+    HTTPDUSER=`ps axo user,comm | grep -E '[a]pache|[h]ttpd|[_]www|[w]ww-data|[n]ginx' | grep -v root | head -1 | cut -d\  -f1`
+    chmod -R 0777 web/uploads
+    setfacl -R -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX web/uploads
+    setfacl -dR -m u:"$HTTPDUSER":rwX -m u:`whoami`:rwX web/uploads
+fi
+
 ## Optionaly: create admin behat tests
 echo_title "Run 'app/console kuma:generate:admin-tests' command..."
 if [[ ${BUNDLE_NAMESPACE_IS_VALID} == 1 ]]; then
