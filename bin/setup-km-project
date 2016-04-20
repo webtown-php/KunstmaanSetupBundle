@@ -175,3 +175,4 @@ echo_title "Install and dump assets"
 app/console assets:install --symlink
 app/console assetic:dump
 app/console assetic:dump -e prod
+app/console kuma:search:populate full
