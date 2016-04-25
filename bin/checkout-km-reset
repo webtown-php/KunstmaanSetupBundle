@@ -1,9 +1,46 @@
 #!/usr/bin/env bash
 
+KEEP_BACKUP=3
+
+function parse_parameter {
+  FILE='app/config/parameters.yml'
+  KEY="${1}: "
+  if [ -f ${FILE} ] ; then
+    CONTENT=`cat ${FILE} | grep -Eio "${KEY}.*"`
+    VALUE=${CONTENT:${#KEY}}
+
+    if [[ ${VALUE} == "null" ]] ; then
+      echo ""
+    else
+      echo $VALUE
+    fi
+  fi
+
+  echo ""
+}
+
+DB_USER=$(parse_parameter 'database_user')
+DB_PASS=$(parse_parameter 'database_password')
+DB_NAME=$(parse_parameter 'database_name')
+DB_HOST=$(parse_parameter 'database_host')
+DB_PORT=$(parse_parameter 'database_port')
+
+# DB backup
+if [[ ${DB_PASS} == "" ]]; then
+  mysqldump -u ${DB_USER} ${DB_NAME} > app/logs/`date +"%Y%m%d%H%M%S"`.sql
+else
+  mysqldump -u ${DB_USER} -p${DB_PASS} ${DB_NAME} > app/logs/`date +"%Y%m%d%H%M%S"`.sql
+fi
+((KEEP_BACKUP++))
+cd app/logs
+ls -tp | grep '.sql$' | tail -n +${KEEP_BACKUP} | xargs rm
+cd ../..
+
 set -e
 set -x
 
 composer install
+# Rebuild DB
 php app/console doctrine:database:drop --force
 php app/console doctrine:database:create
 php app/console doctrine:migrations:migrate --no-interaction
