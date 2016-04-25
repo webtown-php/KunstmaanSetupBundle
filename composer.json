@@ -12,7 +12,7 @@
     "bin": [
         "bin/_km-functions.sh",
         "bin/setup-km-project",
-        "bin/update-km-project",
+        "bin/init-existing-km-project",
         "bin/checkout-km-reset"
     ],
     "minimum-stability": "dev"
