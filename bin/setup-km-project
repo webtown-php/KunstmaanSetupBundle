@@ -169,9 +169,9 @@ bundle install </dev/null
 npm install </dev/null
 bower install </dev/null
 gulp build </dev/null
+rm -rf /tmp/gulp-ruby-sass
 
 # ======================================================================================================================
-app/console kuma:search:setup
 app/console kuma:search:populate full
 
 # ======================================================================================================================
