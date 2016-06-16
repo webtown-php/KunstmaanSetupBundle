@@ -102,7 +102,6 @@ bower install </dev/null
 gulp build </dev/null
 
 # ======================================================================================================================
-app/console kuma:search:setup
 app/console kuma:search:populate full
 
 # ======================================================================================================================
@@ -110,4 +109,3 @@ echo_title "Install and dump assets"
 app/console assets:install --symlink
 app/console assetic:dump
 app/console assetic:dump -e prod
-app/console kuma:search:populate full
