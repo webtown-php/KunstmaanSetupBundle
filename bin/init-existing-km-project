@@ -7,6 +7,8 @@
 
 source `pwd`/`dirname $0`/_km-functions.sh
 
+# A Symfony verziójától függően változik a console command
+CONSOLE_COMMAND=`if [ -d "var" ]; then echo "bin/console"; else echo "app/console"; fi`
 # 0=NO, 1=YES, 2=ASK
 LOAD_FIXTURES=2
 while [[ $# > 0 ]]
@@ -70,17 +72,17 @@ do
 done
 
 # ======================================================================================================================
-echo_title "Run 'app/console doctrine:database:create' command..."
-app/console doctrine:database:create --if-not-exists
+echo_title "Run '$CONSOLE_COMMAND doctrine:database:create' command..."
+${CONSOLE_COMMAND} doctrine:database:create --if-not-exists
 
 echo_title "Build database..."
-app/console doctrine:migrations:migrate --no-interaction
+${CONSOLE_COMMAND} doctrine:migrations:migrate --no-interaction
 
 echo_title "Load fixtures"
 if [[ ${LOAD_FIXTURES} == 2 ]]; then
-    app/console doctrine:fixtures:load
+    ${CONSOLE_COMMAND} doctrine:fixtures:load
 elif [[ ${LOAD_FIXTURES} == 1 ]]; then
-    app/console doctrine:fixtures:load --no-interaction
+    ${CONSOLE_COMMAND} doctrine:fixtures:load --no-interaction
 else
     echo "Don't load fixtures"
 fi
@@ -103,10 +105,10 @@ gulp build </dev/null
 rm -rf /tmp/gulp-ruby-sass
 
 # ======================================================================================================================
-app/console kuma:search:populate full
+${CONSOLE_COMMAND} kuma:search:populate full
 
 # ======================================================================================================================
 echo_title "Install and dump assets"
-app/console assets:install --symlink
-app/console assetic:dump
-app/console assetic:dump -e prod
+${CONSOLE_COMMAND} assets:install --symlink
+${CONSOLE_COMMAND} assetic:dump
+${CONSOLE_COMMAND} assetic:dump -e prod

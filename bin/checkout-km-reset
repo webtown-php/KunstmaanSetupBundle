@@ -2,6 +2,9 @@
 
 KEEP_BACKUP=3
 
+# A Symfony verziójától függően változik a console command
+CONSOLE_COMMAND=`if [ -d "var" ]; then echo "bin/console"; else echo "app/console"; fi`
+
 function parse_parameter {
   FILE='app/config/parameters.yml'
   KEY="${1}: "
@@ -41,13 +44,13 @@ set -x
 
 composer install
 # Rebuild DB
-php app/console doctrine:database:drop --force
-php app/console doctrine:database:create
-php app/console doctrine:migrations:migrate --no-interaction
-php app/console doctrine:fixtures:load --no-interaction
-php app/console assets:install --symlink
-php app/console assetic:dump
+${CONSOLE_COMMAND} doctrine:database:drop --force
+${CONSOLE_COMMAND} doctrine:database:create
+${CONSOLE_COMMAND} doctrine:migrations:migrate --no-interaction
+${CONSOLE_COMMAND} doctrine:fixtures:load --no-interaction
+${CONSOLE_COMMAND} assets:install --symlink
+${CONSOLE_COMMAND} assetic:dump
 # clean prod cache
-php app/console cache:clear -e prod
-php app/console assetic:dump -e prod
-php app/console kuma:search:populate full
+${CONSOLE_COMMAND} cache:clear -e prod
+${CONSOLE_COMMAND} assetic:dump -e prod
+${CONSOLE_COMMAND} kuma:search:populate full

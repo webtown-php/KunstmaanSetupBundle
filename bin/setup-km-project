@@ -19,6 +19,8 @@ LOAD_FIXTURES=2
 
 BUNDLE_NAMESPACE=""
 BUNDLE_NAMESPACE_IS_VALID=0
+# A Symfony verziójától függően változik a console command
+CONSOLE_COMMAND=`if [ -d "var" ]; then echo "bin/console"; else echo "app/console"; fi`
 while [[ $# > 0 ]]
     do
     key="$1"
@@ -98,22 +100,22 @@ do
 done
 
 # ======================================================================================================================
-echo_title "Run 'app/console kuma:generate:bundle' command..."
+echo_title "Run '$CONSOLE_COMMAND kuma:generate:bundle' command..."
 if [[ ${BUNDLE_NAMESPACE_IS_VALID} == 1 ]] ; then
-    app/console kuma:generate:bundle --namespace=${BUNDLE_NAMESPACE} --dir=src --no-interaction
+    ${CONSOLE_COMMAND} kuma:generate:bundle --namespace=${BUNDLE_NAMESPACE} --dir=src --no-interaction
 else
-    app/console kuma:generate:bundle
+    ${CONSOLE_COMMAND} kuma:generate:bundle
 fi
 
-echo_title "Run 'app/console kuma:generate:default-site' command..."
+echo_title "Run '$CONSOLE_COMMAND kuma:generate:default-site' command..."
 if [[ ${ALLOW_DEFAULTS} == 1 ]] ; then
-    app/console kuma:generate:default-site --no-interaction
+    ${CONSOLE_COMMAND} kuma:generate:default-site --no-interaction
 else
-    app/console kuma:generate:default-site
+    ${CONSOLE_COMMAND} kuma:generate:default-site
 fi
 
-echo_title "Run 'app/console doctrine:database:create' command..."
-app/console doctrine:database:create --if-not-exists
+echo_title "Run '$CONSOLE_COMMAND doctrine:database:create' command..."
+${CONSOLE_COMMAND} doctrine:database:create --if-not-exists
 
 echo_title "Build database..."
 if [[ ${USE_MIGRATION} == 2 ]]
@@ -131,17 +133,17 @@ fi
 
 if [[ ${USE_MIGRATION} == 0 ]]
 then
-    app/console doctrine:schema:create
+    ${CONSOLE_COMMAND} doctrine:schema:create
 else
-    app/console doctrine:migrations:diff
-    app/console doctrine:migrations:migrate --no-interaction
+    ${CONSOLE_COMMAND} doctrine:migrations:diff
+    ${CONSOLE_COMMAND} doctrine:migrations:migrate --no-interaction
 fi
 
 echo_title "Load fixtures"
 if [[ ${LOAD_FIXTURES} == 2 ]]; then
-    app/console doctrine:fixtures:load
+    ${CONSOLE_COMMAND} doctrine:fixtures:load
 elif [[ ${LOAD_FIXTURES} == 1 ]]; then
-    app/console doctrine:fixtures:load --no-interaction
+    ${CONSOLE_COMMAND} doctrine:fixtures:load --no-interaction
 else
     echo "Don't load fixtures"
 fi
@@ -155,11 +157,11 @@ if [ -d "web/uploads" ]; then
 fi
 
 ## Optionaly: create admin behat tests
-echo_title "Run 'app/console kuma:generate:admin-tests' command..."
+echo_title "Run '$CONSOLE_COMMAND kuma:generate:admin-tests' command..."
 if [[ ${BUNDLE_NAMESPACE_IS_VALID} == 1 ]]; then
-    app/console kuma:generate:admin-tests --namespace=${BUNDLE_NAMESPACE} --no-interaction
+    ${CONSOLE_COMMAND} kuma:generate:admin-tests --namespace=${BUNDLE_NAMESPACE} --no-interaction
 else
-    app/console kuma:generate:admin-tests
+    ${CONSOLE_COMMAND} kuma:generate:admin-tests
 fi
 
 # ======================================================================================================================
@@ -172,10 +174,10 @@ gulp build </dev/null
 rm -rf /tmp/gulp-ruby-sass
 
 # ======================================================================================================================
-app/console kuma:search:populate full
+${CONSOLE_COMMAND} kuma:search:populate full
 
 # ======================================================================================================================
 echo_title "Install and dump assets"
-app/console assets:install --symlink
-app/console assetic:dump
-app/console assetic:dump -e prod
+${CONSOLE_COMMAND} assets:install --symlink
+${CONSOLE_COMMAND} assetic:dump
+${CONSOLE_COMMAND} assetic:dump -e prod
