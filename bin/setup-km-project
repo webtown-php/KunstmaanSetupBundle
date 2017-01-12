@@ -20,7 +20,7 @@ LOAD_FIXTURES=2
 BUNDLE_NAMESPACE=""
 BUNDLE_NAMESPACE_IS_VALID=0
 # A Symfony verziójától függően változik a console command
-CONSOLE_COMMAND=`if [ -d "var" ]; then echo "bin/console"; else echo "app/console"; fi`
+CONSOLE_COMMAND=`if [ -f "bin/console" ]; then echo "bin/console"; else echo "app/console"; fi`
 while [[ $# > 0 ]]
     do
     key="$1"

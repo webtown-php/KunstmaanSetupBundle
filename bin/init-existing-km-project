@@ -8,7 +8,7 @@
 source `pwd`/`dirname $0`/_km-functions.sh
 
 # A Symfony verziójától függően változik a console command
-CONSOLE_COMMAND=`if [ -d "var" ]; then echo "bin/console"; else echo "app/console"; fi`
+CONSOLE_COMMAND=`if [ -f "bin/console" ]; then echo "bin/console"; else echo "app/console"; fi`
 # 0=NO, 1=YES, 2=ASK
 LOAD_FIXTURES=2
 while [[ $# > 0 ]]

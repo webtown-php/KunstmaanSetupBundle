@@ -3,7 +3,8 @@
 KEEP_BACKUP=3
 
 # A Symfony verziójától függően változik a console command
-CONSOLE_COMMAND=`if [ -d "var" ]; then echo "bin/console"; else echo "app/console"; fi`
+CONSOLE_COMMAND=`if [ -f "bin/console" ]; then echo "bin/console"; else echo "app/console"; fi`
+LOG_DIR=`if [ -d "var/logs" ]; then echo "var/logs"; else echo "app/logs"; fi`
 
 function parse_parameter {
   FILE='app/config/parameters.yml'
@@ -30,12 +31,12 @@ DB_PORT=$(parse_parameter 'database_port')
 
 # DB backup
 if [[ ${DB_PASS} == "" ]]; then
-  mysqldump -u ${DB_USER} ${DB_NAME} > app/logs/`date +"%Y%m%d%H%M%S"`.sql
+  mysqldump -u ${DB_USER} ${DB_NAME} > ${LOG_DIR}/`date +"%Y%m%d%H%M%S"`.sql
 else
-  mysqldump -u ${DB_USER} -p${DB_PASS} ${DB_NAME} > app/logs/`date +"%Y%m%d%H%M%S"`.sql
+  mysqldump -u ${DB_USER} -p${DB_PASS} ${DB_NAME} > ${LOG_DIR}/`date +"%Y%m%d%H%M%S"`.sql
 fi
 ((KEEP_BACKUP++))
-cd app/logs
+cd ${LOG_DIR}
 ls -tp | grep '.sql$' | tail -n +${KEEP_BACKUP} | xargs rm
 cd ../..
 
