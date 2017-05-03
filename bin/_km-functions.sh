@@ -63,7 +63,7 @@ function echo_title {
 }
 
 # compare version numbers: if version_gt "v7.7.2" "7.7"; then ...; fi
-function version_gt() {
+function version_gt {
   # trim v from begin
   if [ ${1:0:1} == "v" ]; then
     local first=${1:1}

@@ -100,7 +100,7 @@ fi
 
 # ======================================================================================================================
 # The </dev/null fix the "read: read error: 0: Resource temporarily unavailable" error!
-echo_title "Install other dependencies... (Bundler, NPM, Bower, Gulp)"
+echo_title "Install other dependencies... (Bundler, npm build)"
 bundle install </dev/null
 npm install </dev/null
 npm run build </dev/null
