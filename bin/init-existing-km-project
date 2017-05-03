@@ -7,6 +7,10 @@
 
 source `pwd`/`dirname $0`/_km-functions.sh
 
+if [ -f ${NVM_DIR}/nvm.sh ]; then
+    source ${NVM_DIR}/nvm.sh
+fi
+
 # A Symfony verziójától függően változik a console command
 CONSOLE_COMMAND=`if [ -f "bin/console" ]; then echo "bin/console"; else echo "app/console"; fi`
 # 0=NO, 1=YES, 2=ASK
@@ -43,24 +47,23 @@ if [[ $(program_is_installed node) == 0 ]]; then
     echo "NodeJS is required, but it is not installed! Please install it before starting setup."
     exit 1
 else
-    echo "$(echo_pass NodeJS)"
-fi
-# Check gem is exist
-if [[ $(program_is_installed gem) == 0 ]]; then
-    echo "RubyGems is required, but it is not installed! Please install it before starting setup. Help: https://rubygems.org/pages/download"
-    exit 1
-else
-    echo "$(echo_pass RubyGems)"
-fi
-# Check bundler is exist
-if [[ $(program_is_installed bundler) == 0 ]]; then
-    echo "Bundler is required, but it is not installed! Please install it before starting setup. Help: http://bundler.io/"
-    exit 1
-else
-    echo "$(echo_pass Bundler)"
+    CURRENT_NODE_VERSION=`node -v`
+    if version_gt $CURRENT_NODE_VERSION "7.7"; then
+      echo "$(echo_pass NodeJS)"
+    else
+      echo "NodeJS version is $CURRENT_NODE_VERSION! But we need minimum v7.7 (or higher)! Use 'nvm install' if nvm is installed."
+      exit 1
+    fi
 fi
 
-npms=("bower" "gulp" "uglifyjs" "uglifycss")
+if [[ $(program_is_installed nvm) == 0 ]]; then
+    echo "NVM is required, but it is not installed! Please install it before starting setup: https://github.com/creationix/nvm"
+    exit 1
+else
+    echo "$(echo_pass NVM)"
+fi
+
+npms=("gulp" "uglifyjs" "uglifycss")
 for npm in "${npms[@]}"
 do
     if [[ $(program_is_installed $npm) == 0 ]]; then
@@ -100,9 +103,7 @@ fi
 echo_title "Install other dependencies... (Bundler, NPM, Bower, Gulp)"
 bundle install </dev/null
 npm install </dev/null
-bower install </dev/null
-gulp build </dev/null
-rm -rf /tmp/gulp-ruby-sass
+npm run build </dev/null
 
 # ======================================================================================================================
 ${CONSOLE_COMMAND} kuma:search:populate full

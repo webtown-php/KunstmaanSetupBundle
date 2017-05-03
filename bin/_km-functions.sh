@@ -61,4 +61,23 @@ function echo_if {
 function echo_title {
   printf "\n\n\e[97;45m\n  » ${1}\n\e[0m\n\n"
 }
+
+# compare version numbers: if version_gt "v7.7.2" "7.7"; then ...; fi
+function version_gt() {
+  # trim v from begin
+  if [ ${1:0:1} == "v" ]; then
+    local first=${1:1}
+  else
+    local first=$1
+  fi
+  # trim v from begin
+  if [ ${2:0:1} == "v" ]; then
+    local second=${2:1}
+  else
+    local second=$2
+  fi
+  local versions="$first
+$second"
+  test "$(printf '%s\n' "$versions" | sort -V | head -n 1)" != "$first";
+}
 # ============================================== Functions
